@@ -69,7 +69,7 @@ pip install bowtie
 
 ## Resources
 
-[Bowtie Docs](http://bowtie-py.readthedocs.io/en/latest/index.html)
-[Bowtie on GitHub](https://github.com/jwkvam/bowtie)
-[Bowtie live demo](https://bowtie-demo.herokuapp.com/)
-[The Hitchhiker's Guide to Python](http://python-guide-pt-br.readthedocs.io/en/latest/)
+[Bowtie Docs](http://bowtie-py.readthedocs.io/en/latest/index.html)  
+[Bowtie on GitHub](https://github.com/jwkvam/bowtie)  
+[Bowtie live demo](https://bowtie-demo.herokuapp.com/)  
+[The Hitchhiker's Guide to Python](http://python-guide-pt-br.readthedocs.io/en/latest/)  
