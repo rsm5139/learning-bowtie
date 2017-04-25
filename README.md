@@ -59,13 +59,35 @@ Finally, to activate the virtual environment, type:
 venv/bin/activate
 ```
 
-Now newly installed packages will become a part of this project's virtual environment. simply type ```venv/bin/deactivate``` when you are finished working on this project, or ```venv/bin/activate``` to work on it again. _You must be in your project's directory for these commands to work!_
+Now newly installed packages will become a part of this project's virtual environment. simply type ```deactivate``` when you are finished working on this project, or ```venv/bin/activate``` to work on it again. _You must be in your project's directory for these commands to work!_
 
 ### 1.6 Install Bowtie
 
 ```
 pip install bowtie
 ```
+
+## Step 2: Running an Interactive Example
+
+Some additional packages are required to run the interactive examples in this repository. To install all of them at once, enter the following command in your terminal:
+
+```
+pip install -r requirements.txt
+```
+
+The first Bowtie example can be built with the following command:
+
+```
+python step_1.py build
+```
+
+After the build is finished, enter the following command:
+
+```
+python step_1.py serve
+```
+
+Then, open a web browser and navigate to [http://0.0.0.0:9991](http://0.0.0.0:9991). You are now able to interact with the app.
 
 ## Resources
 
