@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from bowtie.visual import Plotly
 from bowtie.control import Slider, Number
-from bowtie import cache
+from bowtie import cache, command, Pager
 import numpy as np
 import plotlywrapper as pw
-import plotly.plotly as py
-import plotly.graph_objs as go
+
+pager = Pager()
 
 #
 # Initialize our values
@@ -13,10 +15,10 @@ import plotly.graph_objs as go
 #
 def initialize():
     cache.save('scheduled',30)
-    top_left(5)
-    top_right(0.5)
-    middle_left(3)
-    middle_right(30)
+    r1v1_listener(5)
+    r1v2_listener(0.5)
+    r2v1_listener(3)
+    r2v2_listener(30)
 
 #
 # Scheduled function
@@ -26,47 +28,39 @@ def timed_event():
     ticker -= 1
     if ticker < 0:
         ticker = 0
-    middle_right(ticker)
+    r2v2_listener(ticker)
     cache.save('scheduled',ticker)
 
-#
-# Top Row
-#
-sine_plot1 = Plotly()
-freq_slider1 = Slider(caption='Left Plot', minimum=1, maximum=10, start=5, step=1)
-sine_plot2 = Plotly()
-freq_slider2 = Slider(caption='Right Plot', minimum=0.1, maximum=1, start=0.5, step=0.1)
-
-def top_left(freq):
-    freq = float(freq)
-    t = np.linspace(0, 10, 100)
-    sine_plot1.do_all(pw.line(t, np.sin(freq * t)).to_json())
-    
-def top_right(freq):
-    freq = float(freq)
-    t = np.linspace(0, 10, 100)
-    sine_plot2.do_all(pw.line(t, np.sin(freq * t)).to_json())
+def page_event():
+    pager.notify()
 
 #
-# Middle Row
+# Row 1
 #
-sine_plot3 = Plotly()
-freq_number1 = Number(caption='Left Plot', minimum=1, maximum=10, start=3, step=1)
-sine_plot4 = Plotly()
-#freq_number2 = Slider(caption='Right Plot', minimum=0.1, maximum=1, start=0.5, step=0.1)
-
-def middle_left(freq):
+r1v1 = Plotly()
+r1v2 = Plotly()
+r1v1_controller = Slider(caption='Row 1 - Left', minimum=1, maximum=10, start=5, step=1)
+r1v2_controller = Slider(caption='Row 1 - Right', minimum=0.1, maximum=1, start=0.5, step=0.1)
+def r1v1_listener(freq):
     freq = float(freq)
     t = np.linspace(0, 10, 100)
-    sine_plot3.do_all(pw.line(t, np.sin(freq * t)).to_json())
-    
-def middle_right(n):
-    #freq = float(freq)
-    #t = np.linspace(0, 10, 100)
-    #sine_plot4.do_all(pw.line(t, np.sin(freq * t)).to_json())
-    #sine_plot4.progress.do_visible(True)
-    #sine_plot4.progress.do_percent(n)
-    
+    r1v1.do_all(pw.line(t, np.sin(freq * t)).to_json())
+def r1v2_listener(freq):
+    freq = float(freq)
+    t = np.linspace(0, 10, 100)
+    r1v2.do_all(pw.line(t, np.sin(freq * t)).to_json())
+
+#
+# Row 2
+#
+r2v1 = Plotly()
+r2v2 = Plotly()
+r2v1_controller = Number(caption='Row 2 - Left', minimum=1, maximum=10, start=3, step=1)
+def r2v1_listener(freq):
+    freq = float(freq)
+    t = np.linspace(0, 10, 100)
+    r2v1.do_all(pw.line(t, np.sin(freq * t)).to_json())
+def r2v2_listener(n):
     fig = {
       "data": [
         {
@@ -95,13 +89,11 @@ def middle_right(n):
             ]
         }
     }
-    sine_plot4.do_all(fig)
-    #py.iplot(fig)
+    r2v2.do_all(fig)
 
 #
 # Bowtie section
 #
-from bowtie import command
 @command
 def construct(path):
     from bowtie import Layout
@@ -115,20 +107,21 @@ Learning Bowtie is fun!
     layout = Layout(rows=3,columns=12,description=description,background_color='PaleTurquoise',directory=path,debug=True)
     # Schedule a task
     # You must edit server.py manually after build for this to work
-    layout.schedule(1,timed_event) # Edit server.py ->socketio.run(app, host=host, port=port, use_reloader=False)
+    layout.schedule(1,page_event) # Edit server.py ->socketio.run(app, host=host, port=port, use_reloader=False)
+    layout.respond(pager,timed_event)
     # Add controllers to the sidebar
-    layout.add_sidebar(freq_slider1)
-    layout.add_sidebar(freq_slider2)
-    layout.add_sidebar(freq_number1)
+    layout.add_sidebar(r1v1_controller)
+    layout.add_sidebar(r1v2_controller)
+    layout.add_sidebar(r2v1_controller)
     # Add the visuals
-    layout.add(sine_plot1,row_start=0,column_start=0,row_end=0,column_end=5)
-    layout.add(sine_plot2,row_start=0,column_start=6,row_end=0,column_end=11)
-    layout.add(sine_plot3,row_start=1,column_start=0,row_end=1,column_end=5)
-    layout.add(sine_plot4,row_start=1,column_start=6,row_end=1,column_end=11)
+    layout.add(r1v1,row_start=0,row_end=0,column_start=0,column_end=5)
+    layout.add(r1v2,row_start=0,row_end=0,column_start=6,column_end=11)
+    layout.add(r2v1,row_start=1,row_end=1,column_start=0,column_end=5)
+    layout.add(r2v2,row_start=1,row_end=1,column_start=6,column_end=11)
     # Reaction tasks
-    layout.subscribe(top_left, freq_slider1.on_change) # Continuously changes while adjusting
-    layout.subscribe(top_right, freq_slider2.on_after_change) # Only changes after adjustment
-    layout.subscribe(middle_left, freq_number1.on_change)
+    layout.subscribe(r1v1_listener, r1v1_controller.on_change) # Continuously changes while adjusting
+    layout.subscribe(r1v2_listener, r1v2_controller.on_after_change) # Only changes after adjustment
+    layout.subscribe(r2v1_listener, r2v1_controller.on_change)
     # Initialize the app on page load
     layout.load(initialize)
     # Build the app
