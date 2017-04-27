@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from bowtie.visual import Plotly
-from bowtie.control import Slider, Number
+from bowtie.control import Slider, Number, Button
 from bowtie import cache, command, Pager
 import numpy as np
 import plotlywrapper as pw
@@ -33,6 +33,11 @@ def timed_event():
 
 def page_event():
     pager.notify()
+
+#
+# Reset Button
+#
+reset_button = Button(label='RESET')
 
 #
 # Row 1
@@ -110,6 +115,7 @@ Learning Bowtie is fun!
     layout.schedule(1,page_event) # Edit server.py ->socketio.run(app, host=host, port=port, use_reloader=False)
     layout.respond(pager,timed_event)
     # Add controllers to the sidebar
+    layout.add_sidebar(reset_button)
     layout.add_sidebar(r1v1_controller)
     layout.add_sidebar(r1v2_controller)
     layout.add_sidebar(r2v1_controller)
@@ -119,6 +125,7 @@ Learning Bowtie is fun!
     layout.add(r2v1,row_start=1,row_end=1,column_start=0,column_end=5)
     layout.add(r2v2,row_start=1,row_end=1,column_start=6,column_end=11)
     # Reaction tasks
+    layout.subscribe(initialize, reset_button.on_click)
     layout.subscribe(r1v1_listener, r1v1_controller.on_change) # Continuously changes while adjusting
     layout.subscribe(r1v2_listener, r1v2_controller.on_after_change) # Only changes after adjustment
     layout.subscribe(r2v1_listener, r2v1_controller.on_change)
