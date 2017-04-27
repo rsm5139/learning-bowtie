@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from bowtie.visual import Plotly
+from bowtie.visual import Plotly, SmartGrid
 from bowtie.control import Slider, Number, Button
 from bowtie import cache, command, Pager
 import numpy as np
 import plotlywrapper as pw
+import plotly.graph_objs as go
 
 pager = Pager()
 
@@ -17,7 +18,7 @@ def initialize():
     cache.save('scheduled',30)
     r1v1_listener(5)
     r1v2_listener(0.5)
-    r2v1_listener(3)
+    r2v1_listener(500)
     r2v2_listener(30)
 
 #
@@ -60,11 +61,17 @@ def r1v2_listener(freq):
 #
 r2v1 = Plotly()
 r2v2 = Plotly()
-r2v1_controller = Number(caption='Row 2 - Left', minimum=1, maximum=10, start=3, step=1)
-def r2v1_listener(freq):
-    freq = float(freq)
-    t = np.linspace(0, 10, 100)
-    r2v1.do_all(pw.line(t, np.sin(freq * t)).to_json())
+r2v1_controller = Number(caption='Row 2 - Left', minimum=100, maximum=1000, start=500, step=100)
+def r2v1_listener(n):
+    random_x = np.random.randn(n)
+    random_y = np.random.randn(n)
+    trace = go.Scatter(
+        x = random_x,
+        y = random_y,
+        mode = 'markers'
+    )
+    fig = { "data": [trace] }
+    r2v1.do_all(fig)
 def r2v2_listener(n):
     fig = {
       "data": [
@@ -97,6 +104,18 @@ def r2v2_listener(n):
     r2v2.do_all(fig)
 
 #
+# Row 3
+#
+r3v1 = SmartGrid()
+r3v2 = SmartGrid()
+def r3v1_listener(a,b,c):
+    table_data = r3v1.get()
+    table_data.append({"Control 1": a, "Control 2": b, "Control 3": c})
+    r3v1.do_update(table_data)
+def r3v2_listener(selected_data):
+    r3v2.do_update(selected_data['points'])
+
+#
 # Bowtie section
 #
 @command
@@ -124,11 +143,15 @@ Learning Bowtie is fun!
     layout.add(r1v2,row_start=0,row_end=0,column_start=6,column_end=11)
     layout.add(r2v1,row_start=1,row_end=1,column_start=0,column_end=5)
     layout.add(r2v2,row_start=1,row_end=1,column_start=6,column_end=11)
+    layout.add(r3v1,row_start=2,row_end=2,column_start=0,column_end=5)
+    layout.add(r3v2,row_start=2,row_end=2,column_start=6,column_end=11)
     # Reaction tasks
     layout.subscribe(initialize, reset_button.on_click)
     layout.subscribe(r1v1_listener, r1v1_controller.on_change) # Continuously changes while adjusting
     layout.subscribe(r1v2_listener, r1v2_controller.on_after_change) # Only changes after adjustment
     layout.subscribe(r2v1_listener, r2v1_controller.on_change)
+    layout.subscribe(r3v1_listener, r1v1_controller.on_after_change, r1v2_controller.on_after_change, r2v1_controller.on_change)
+    layout.subscribe(r3v2_listener, r2v1.on_select)
     # Initialize the app on page load
     layout.load(initialize)
     # Build the app

@@ -1,4 +1,4 @@
-# learning-bowtie
+# Learning Bowtie - v0.3.2
 I'm learning Python bowtie!
 
 [Bowtie](https://github.com/jwkvam/bowtie) is used to quickly and easily create interactive dashboards in Python. It's basically the Python version of Shiny for R.
@@ -88,6 +88,10 @@ python step_1.py serve
 ```
 
 Then, open a web browser and navigate to [http://0.0.0.0:9991](http://0.0.0.0:9991). You are now able to interact with the app.
+
+_**Bug notice:_ After the build step, you must make the following edit to ```build/src/server.py``` for the timer to work:
+
+change ```socketio.run(app, host=host, port=port)``` to ```socketio.run(app, host=host, port=port, use_reloader=False)```.
 
 ## Resources
 
