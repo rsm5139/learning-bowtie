@@ -15,20 +15,18 @@ pager = Pager()
 # This prevents an empty page from loading
 #
 def initialize():
-    cache.save('scheduled',30)
     r1v1_listener(5)
     r1v2_listener(0.5)
     r2v1_listener(500)
-    r2v2_listener(30)
 
 #
 # Scheduled function
 #
 def timed_event():
     ticker = cache.load('scheduled')
-    ticker -= 1
-    if ticker < 0:
-        ticker = 0
+    if ticker is None:
+        ticker = -1
+    ticker += 1
     r2v2_listener(ticker)
     cache.save('scheduled',ticker)
 
@@ -73,10 +71,13 @@ def r2v1_listener(n):
     fig = { "data": [trace] }
     r2v1.do_all(fig)
 def r2v2_listener(n):
+    time_limit = 60
+    if n > time_limit:
+        n = time_limit
     fig = {
       "data": [
         {
-          "values": [30-n, n],
+          "values": [n, time_limit-n],
           "marker": {"colors": ["white", "green"]},
           "textposition":"inside",
           "name": "Timer",
@@ -96,7 +97,7 @@ def r2v2_listener(n):
                         "size": 100
                     },
                     "showarrow": False,
-                    "text": str(n)
+                    "text": str(time_limit-n)
                 }
             ]
         }
@@ -128,7 +129,7 @@ First Bowtie app
 Learning Bowtie is fun!
 
 """
-    layout = Layout(rows=3,columns=12,description=description,background_color='PaleTurquoise',directory=path,debug=True)
+    layout = Layout(rows=3,columns=12,description=description,background_color='PaleTurquoise',directory=path,debug=True,basic_auth=True,username='user',password='password')
     # Schedule a task
     # You must edit server.py manually after build for this to work
     layout.schedule(1,page_event) # Edit server.py ->socketio.run(app, host=host, port=port, use_reloader=False)
