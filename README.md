@@ -1,5 +1,5 @@
 # Learning Bowtie - v0.3.2
-I'm learning Python bowtie!
+I'm learning Python [bowtie](https://github.com/jwkvam/bowtie)!
 
 [Bowtie](https://github.com/jwkvam/bowtie) is used to quickly and easily create interactive dashboards in Python. It's basically the Python version of Shiny for R.
 
