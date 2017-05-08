@@ -129,7 +129,7 @@ First Bowtie app
 Learning Bowtie is fun!
 
 """
-    layout = Layout(rows=3,columns=12,description=description,background_color='PaleTurquoise',directory=path,debug=True,basic_auth=True,username='user',password='password')
+    layout = Layout(rows=3,columns=12,description=description,background_color='PaleTurquoise',directory=path,debug=True)
     # Schedule a task
     # You must edit server.py manually after build for this to work
     layout.schedule(1,page_event) # Edit server.py ->socketio.run(app, host=host, port=port, use_reloader=False)
