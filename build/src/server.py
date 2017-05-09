@@ -24,7 +24,7 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    return username == 'user' and password == 'password'
+    return username == 'username' and password == 'password'
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
@@ -85,7 +85,6 @@ class Scheduler(object):
 
 
 @app.route('/')
-@requires_auth
 def index():
     return render_template('index.html')
 
@@ -303,7 +302,7 @@ def main(host, port):
 
     for sched in scheds:
         sched.start()
-    socketio.run(app, host=host, port=port)
+    socketio.run(app, host=host, port=port, use_reloader=False)
     for sched in scheds:
         sched.stop()
 
