@@ -78,13 +78,13 @@ pip install -r requirements.txt
 The first Bowtie example can be built with the following command:
 
 ```
-python step_1.py build
+python step_2.py build
 ```
 
 After the build is finished, enter the following command:
 
 ```
-python step_1.py serve
+python step_2.py serve
 ```
 
 Then, open a web browser and navigate to [http://0.0.0.0:9991](http://0.0.0.0:9991). You are now able to interact with the app.
@@ -93,6 +93,7 @@ _**Bug notice:_ After the build step, you must make the following edit to ```bui
 
 change ```socketio.run(app, host=host, port=port)``` to ```socketio.run(app, host=host, port=port, use_reloader=False)```.
 
+_**You can also run_ ```make devel``` _from the command terminal to build the app and fix the bug_
 ## Resources
 
 [Bowtie Docs](http://bowtie-py.readthedocs.io/en/latest/index.html)  
